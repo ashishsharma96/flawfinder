@@ -155,6 +155,25 @@ void DefaultRemovePartHandler::removed( vehicle &veh, const int part )
     here.dirty_vehicle_list.insert( &veh );
 }
 
+// Vehicle stack methods.
+vehicle_stack::iterator vehicle_stack::erase( vehicle_stack::const_iterator it )
+{
+    return myorigin->remove_item( part_num, it );
+}
+
+void vehicle_stack::insert( const item &newitem )
+{
+    myorigin->add_item( part_num, newitem );
+}
+
+units::volume vehicle_stack::max_volume() const
+{
+    if( myorigin->part_flag( part_num, "CARGO" ) && !myorigin->part( part_num ).is_broken() ) {
+        // Set max volume for vehicle cargo to prevent integer overflow
+        return std::min( myorigin->part( part_num ).info().size, 10000_liter );
+    }
+    return 0_ml;
+}
 
 // Vehicle stack methods.
 vehicle_stack::iterator vehicle_stack::erase( vehicle_stack::const_iterator it )
